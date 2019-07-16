@@ -4,20 +4,20 @@
 自动获取内网IP并修改域名解析
 
 #### 应用场景
-内网里有一台测试机，没有固定IP，IP是有可能变化的，而我需要无感知地用ssh连接这台测试机
+公司里有一台测试机，没有固定IP，IP是有可能变化的，而我需要无感知地用ssh连接这台服务器
 
 #### 解决方案
 1. 自动启动，如果被关了，就自动拉起来
-2. 每分钟监控一次本地IP地址有没有变化
-3. 如果IP有变化，就调用dnspod的接口及时更新域名解析
+2. 定时（比如说每1分钟）监控一下本地IP地址有没有变化
+3. 如果IP有变化，就调用aliyun dns的接口及时更新域名解析
 4. ssh连接的时候直接用域名
 
 #### 使用步骤
 
 ##### 准备工作
-1. 在dnspod上面有一个域名
+1. 在aliyun上面有一个域名
 2. 创建好二级域名
-3. <https://support.dnspod.cn/Kb/showarticle/tsid/227/> 按文档获取到id和token
+3. <https://usercenter.console.aliyun.com/#/manage/ak> 获取到AccessKey和Access Key Secret
 
 ##### 添加环境变量:主域名(例)
 ```shell
@@ -27,17 +27,13 @@ export domain_name=abc.red
 ```shell
 export sub_domain_name=test
 ```
-##### 添加环境变量:dnspod的访问编号(例)
+##### 添加环境变量:aliyn dns的AccessKeyId(例)
 ```shell
-export dnspod_id=12345
+export aliyun_dns_key=7324hjksd8y9f3jk
 ```
-##### 添加环境变量:dnspod的访问令牌(例)
+##### 添加环境变量:aliyn dns的AccessKeySecret(例)
 ```shell
-export dnspod_token=12345678901234567890123456789012
-```
-##### 添加环境变量:是否启用调试模式(可选,1启动,其它不启动)
-```shell
-export is_debug=1
+export aliyun_dns_secret=u8a9q2j3nklfcasu82hi3ry8as9d2h3
 ```
 ##### 运行程序
 ```shell
