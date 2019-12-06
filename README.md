@@ -37,6 +37,28 @@ export aliyun_dns_secret=u8a9q2j3nklfcasu82hi3ry8as9d2h3
 ```
 ##### 运行程序
 ```shell
-windows上直接双击启动
-linux上面用nohup或其它方式启动
+在Supervisor中配置成服务，自动监控，如果程序挂了就自动拉起来
+
+[program:get_ip]
+command=/root/get_ip/get_ip
+priority=999
+autostart=true
+autorestart=true
+startsecs=10
+startretries=3
+exitcodes=0,2
+stopsignal=QUIT
+stopwaitsecs=10
+user=root
+log_stdout=true
+log_stderr=true
+logfile=/root/get_ip/get_ip.log
+logfile_maxbytes=1MB
+logfile_backups=10
+stdout_logfile_maxbytes=20MB
+stdout_logfile_backups=20
+stdout_logfile=/root/get_ip/get_ip.stdout.log
+
+supervisorctl reload
+
 ```
