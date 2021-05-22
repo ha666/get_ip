@@ -19,46 +19,55 @@
 2. 创建好二级域名
 3. <https://usercenter.console.aliyun.com/#/manage/ak> 获取到AccessKey和Access Key Secret
 
-##### 添加环境变量:主域名(例)
-```shell
-export domain_name=abc.red
-```
-##### 添加环境变量:二级域名(例)
-```shell
-export sub_domain_name=test
-```
-##### 添加环境变量:aliyn dns的AccessKeyId(例)
-```shell
-export aliyun_dns_key=7324hjksd8y9f3jk
-```
-##### 添加环境变量:aliyn dns的AccessKeySecret(例)
-```shell
-export aliyun_dns_secret=u8a9q2j3nklfcasu82hi3ry8as9d2h3
+##### 添加配置文件 get-ip.yaml
+```yaml
+domain_name: ha666.com
+sub_domain_name: pi
+aliyun_dns_key: abc
+aliyun_dns_secret: def
+is_debug: true
+record_id: ""
 ```
 ##### 运行程序
 ```shell
-在Supervisor中配置成服务，自动监控，如果程序挂了就自动拉起来
 
-[program:get_ip]
-command=/root/get_ip/get_ip
-priority=999
-autostart=true
-autorestart=true
-startsecs=10
-startretries=3
-exitcodes=0,2
-stopsignal=QUIT
-stopwaitsecs=10
-user=root
-log_stdout=true
-log_stderr=true
-logfile=/root/get_ip/get_ip.log
-logfile_maxbytes=1MB
-logfile_backups=10
-stdout_logfile_maxbytes=20MB
-stdout_logfile_backups=20
-stdout_logfile=/root/get_ip/get_ip.stdout.log
+# 在systemd中配置成服务，自动监控，如果程序挂了就自动拉起来
 
-supervisorctl reload
+[Unit]
+Description=get-ip
+After=network.target
 
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+Restart=always
+
+# Prevent writes to /usr, /boot, and /etc
+ProtectSystem=full
+
+# Doesn't yet work properly with SELinux enabled
+# NoNewPrivileges=true
+
+PrivateDevices=true
+
+WorkingDirectory=/home/pi/proj/get-ip
+ExecStart=/home/pi/proj/get-ip/get-ip
+
+KillMode=process
+KillSignal=SIGTERM
+
+# Don't want to see an automated SIGKILL ever
+SendSIGKILL=yes
+
+RestartSec=20s
+UMask=007
+```
+```shell
+sudo systemctl enable get-ip.service
+sudo systemctl daemon-reload
+sudo systemctl start get-ip.service
 ```
