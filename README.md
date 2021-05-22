@@ -42,8 +42,8 @@ WantedBy=multi-user.target
 
 [Service]
 Type=simple
-User=pi
-Group=pi
+User=root
+Group=root
 Restart=always
 
 # Prevent writes to /usr, /boot, and /etc
